@@ -1,0 +1,776 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#07090d">
+    <title>VANTA — Drive Beyond</title>
+    <link rel="icon" type="image/png" href="./logo.png">
+    <style>
+        :root {
+            --bg: #07090d;
+            --fg: #f4f5f7;
+            --muted: #a7abb4;
+            --accent: #a8ff3e
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            background: var(--bg);
+            scroll-behavior: auto
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            overflow-x: hidden
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        .progress {
+            position: fixed;
+            z-index: 20;
+            left: 0;
+            top: 0;
+            height: 2px;
+            width: 0;
+            background: var(--accent);
+            box-shadow: 0 0 14px #a8ff3e88
+        }
+
+        .nav {
+            position: absolute;
+            z-index: 10;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 28px clamp(20px, 6vw, 88px);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            font-size: 11px
+        }
+
+        .brand {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: .22em
+        }
+
+        .brand span {
+            color: var(--accent)
+        }
+
+        .navlinks {
+            display: flex;
+            gap: 30px;
+            color: #d1d3d8
+        }
+
+        .navlinks a:hover {
+            color: var(--accent)
+        }
+
+        .nav-cta {
+            border: 1px solid #ffffff55;
+            padding: 12px 17px;
+            border-radius: 99px
+        }
+
+        .hero {
+            height: 320vh;
+            position: relative
+        }
+
+        .sticky {
+            position: sticky;
+            top: 0;
+            height: 100svh;
+            min-height: 560px;
+            overflow: hidden;
+            background: #090c11
+        }
+
+        #scene {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .shade {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(3, 5, 9, .78), rgba(3, 5, 9, .25) 48%, rgba(3, 5, 9, .02) 78%), linear-gradient(0deg, rgba(3, 5, 9, .72), transparent 40%, rgba(3, 5, 9, .18));
+            pointer-events: none
+        }
+
+        .hero-copy {
+            position: absolute;
+            left: clamp(22px, 9vw, 140px);
+            top: 50%;
+            transform: translateY(-48%);
+            max-width: 650px;
+            pointer-events: none
+        }
+
+        .eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 10px;
+            letter-spacing: .28em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700
+        }
+
+        .eyebrow:before {
+            content: "";
+            width: 28px;
+            height: 1px;
+            background: currentColor
+        }
+
+        h1 {
+            font-size: clamp(56px, 9vw, 128px);
+            line-height: .84;
+            letter-spacing: -.075em;
+            margin: 24px 0 26px;
+            font-weight: 850;
+            text-transform: uppercase
+        }
+
+        h1 em {
+            font-style: normal;
+            color: transparent;
+            -webkit-text-stroke: 1px #f4f5f7
+        }
+
+        .intro {
+            font-size: clamp(14px, 1.4vw, 17px);
+            line-height: 1.8;
+            color: #d0d2d8;
+            max-width: 390px
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            pointer-events: auto;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px 20px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            transition: transform .2s, background .2s
+        }
+
+        .btn:hover {
+            transform: translateY(-2px)
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #10140b
+        }
+
+        .btn-ghost {
+            border: 1px solid #ffffff65;
+            background: #0a0c1080;
+            backdrop-filter: blur(10px)
+        }
+
+        .scroll-note {
+            position: absolute;
+            bottom: 30px;
+            left: clamp(22px, 6vw, 88px);
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #d1d3d8;
+            font-size: 10px;
+            letter-spacing: .18em;
+            text-transform: uppercase
+        }
+
+        .scroll-line {
+            height: 42px;
+            width: 1px;
+            background: linear-gradient(var(--accent), transparent)
+        }
+
+        .counter {
+            position: absolute;
+            right: clamp(22px, 6vw, 88px);
+            bottom: 34px;
+            font-variant-numeric: tabular-nums;
+            color: #ffffffb8;
+            font-size: 11px;
+            letter-spacing: .15em
+        }
+
+        .side-label {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            writing-mode: vertical-rl;
+            transform: translateY(-50%);
+            font-size: 9px;
+            letter-spacing: .22em;
+            color: #ffffff8c
+        }
+
+        section.content {
+            position: relative;
+            padding: clamp(76px, 12vw, 150px) clamp(22px, 10vw, 150px);
+            background: #080a0e
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1100px;
+            margin: auto;
+            align-items: end
+        }
+
+        .kicker {
+            color: var(--accent);
+            font-size: 10px;
+            letter-spacing: .25em;
+            text-transform: uppercase;
+            font-weight: 800
+        }
+
+        h2 {
+            font-size: clamp(36px, 5.5vw, 72px);
+            letter-spacing: -.06em;
+            line-height: .98;
+            margin: 18px 0 0
+        }
+
+        .content p {
+            color: var(--muted);
+            line-height: 1.9;
+            font-size: 15px;
+            max-width: 470px
+        }
+
+        .specs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: #ffffff20;
+            margin: 70px auto 0;
+            max-width: 1100px;
+            border: 1px solid #ffffff20
+        }
+
+        .spec {
+            background: #080a0e;
+            padding: 25px 28px
+        }
+
+        .spec strong {
+            display: block;
+            font-size: clamp(26px, 3vw, 42px);
+            letter-spacing: -.05em
+        }
+
+        .spec span {
+            display: block;
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 10px;
+            letter-spacing: .16em;
+            text-transform: uppercase
+        }
+
+        .showcase {
+            position: relative;
+            padding: clamp(80px, 12vw, 150px) clamp(22px, 10vw, 150px);
+            background: linear-gradient(180deg, #080a0e, #0d1016)
+        }
+
+        .showcase-inner {
+            max-width: 1100px;
+            margin: auto
+        }
+
+        .showcase-head {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: end
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 55px
+        }
+
+        .feature-card {
+            min-height: 240px;
+            padding: 28px;
+            border: 1px solid #ffffff1c;
+            background: linear-gradient(145deg, #ffffff0b, #ffffff02);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between
+        }
+
+        .feature-number {
+            color: var(--accent);
+            font-size: 11px;
+            letter-spacing: .2em
+        }
+
+        .feature-card h3 {
+            font-size: clamp(22px, 2.5vw, 32px);
+            letter-spacing: -.04em;
+            margin: 35px 0 12px
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--muted);
+            margin: 0
+        }
+
+        .manifesto {
+            padding: clamp(80px, 13vw, 170px) 24px;
+            text-align: center;
+            background: #07090d;
+            border-top: 1px solid #ffffff12;
+            border-bottom: 1px solid #ffffff12
+        }
+
+        .manifesto p {
+            max-width: 800px;
+            margin: 22px auto 0;
+            color: #c4c7ce;
+            font-size: clamp(18px, 2.6vw, 29px);
+            line-height: 1.65;
+            letter-spacing: -.025em
+        }
+
+        .final {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 90px 24px;
+            background: radial-gradient(ellipse at 50% 100%, #243016 0%, #080a0e 55%)
+        }
+
+        .final h2 {
+            font-size: clamp(48px, 8vw, 100px);
+            max-width: 900px;
+            margin: 16px auto 26px
+        }
+
+        footer {
+            padding: 60px clamp(22px, 6vw, 88px) 28px;
+            border-top: 1px solid #ffffff18;
+            color: #8c909a;
+            font-size: 10px;
+            letter-spacing: .12em;
+            text-transform: uppercase
+        }
+
+        .footer-main {
+            max-width: 1250px;
+            margin: 0 auto 45px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr;
+            gap: 50px
+        }
+
+        .footer-brand {
+            font-size: 25px;
+            font-weight: 900;
+            letter-spacing: .2em;
+            color: #f4f5f7
+        }
+
+        .footer-brand span {
+            color: var(--accent)
+        }
+
+        .footer-about {
+            max-width: 330px;
+            color: #9da2ac;
+            line-height: 1.9;
+            letter-spacing: .02em;
+            text-transform: none;
+            font-size: 13px;
+            margin-top: 18px
+        }
+
+        .footer-title {
+            color: #f4f5f7;
+            font-size: 11px;
+            letter-spacing: .2em;
+            margin: 6px 0 20px
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px 18px
+        }
+
+        .footer-links a {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #aeb2bb;
+            font-size: 11px;
+            letter-spacing: .08em;
+            transition: color .2s, transform .2s
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            transform: translateX(3px)
+        }
+
+        .footer-links a span {
+            color: var(--accent);
+            font-size: 13px
+        }
+
+        .footer-bottom {
+            max-width: 1250px;
+            margin: auto;
+            padding-top: 22px;
+            border-top: 1px solid #ffffff18;
+            display: flex;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+            line-height: 1.8
+        }
+
+        .footer-bottom a {
+            color: #d1d3d8
+        }
+
+        .footer-bottom a:hover {
+            color: var(--accent)
+        }
+
+        #loader {
+            position: absolute;
+            z-index: 5;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: #080a0e;
+            color: #c6c9ce;
+            font-size: 11px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            transition: opacity .45s
+        }
+
+        #loader.hidden {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        .loadbar {
+            width: 180px;
+            height: 2px;
+            background: #ffffff22;
+            margin: 16px auto
+        }
+
+        .loadbar span {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: var(--accent);
+            transition: width .12s
+        }
+
+        .loadnote {
+            display: block;
+            margin-top: 9px;
+            color: #9298a3;
+            font-size: 10px;
+            letter-spacing: .08em;
+            text-transform: none;
+            text-align: center
+        }
+
+        @media(max-width:700px) {
+            .nav {
+                padding: 20px
+            }
+
+            .navlinks {
+                display: none
+            }
+
+            .nav-cta {
+                padding: 10px 13px
+            }
+
+            .hero {
+                height: 260vh
+            }
+
+            .sticky {
+                min-height: 540px
+            }
+
+            .shade {
+                background: linear-gradient(90deg, #030509b8, #03050938 90%), linear-gradient(0deg, #030509b8, transparent 55%)
+            }
+
+            .hero-copy {
+                top: 48%;
+                left: 23px;
+                right: 22px
+            }
+
+            h1 {
+                font-size: clamp(55px, 17vw, 92px)
+            }
+
+            .intro {
+                max-width: 320px
+            }
+
+            .side-label {
+                display: none
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 18px
+            }
+
+            .showcase-head {
+                grid-template-columns: 1fr;
+                gap: 18px
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr
+            }
+
+            .feature-card {
+                min-height: 190px
+            }
+
+            .footer-main {
+                grid-template-columns: 1fr;
+                gap: 35px
+            }
+
+            .footer-links {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .footer-bottom {
+                flex-direction: column
+            }
+
+            .specs {
+                grid-template-columns: 1fr;
+                margin-top: 45px
+            }
+
+            .spec {
+                padding: 20px 24px
+            }
+
+            .scroll-note {
+                bottom: 18px
+            }
+
+            .counter {
+                bottom: 26px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .btn {
+                transition: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="progress" id="progress"></div>
+    <header class="nav"><a class="brand" href="#" aria-label="Vanta home">VAN<span>T</span>A</a>
+        <nav class="navlinks" aria-label="Main navigation"><a href="#craft">Craft</a><a href="#details">Details</a><a
+                href="#experience">Experience</a><a href="#contact">Contact</a></nav><a class="nav-cta"
+            href="#contact">Discover Vanta ↗</a>
+    </header>
+    <main>
+        <section class="hero" id="top" aria-label="Scroll-driven car film">
+            <div class="sticky"><canvas id="scene" aria-label="Scroll controlled car image sequence"></canvas>
+                <div class="shade"></div>
+                <div id="loader">
+                    <div>Preparing the drive<div class="loadbar"><span id="loadfill"></span></div>
+                        <div id="loadtext">Loading frames 0%</div><span class="loadnote">Keep this folder intact for the
+                            image sequence to work.</span>
+                    </div>
+                </div>
+                <div class="hero-copy">
+                    <div class="eyebrow">Engineering emotion</div>
+                    <h1>Drive<br><em>beyond.</em></h1>
+                    <p class="intro">Not built to blend in. A machine shaped by motion, precision, and the instinct to
+                        take the long way home.</p>
+                    <div class="actions"><a class="btn btn-primary" href="#craft">Explore the machine
+                            <span>↗</span></a><a class="btn btn-ghost" href="#details">The details <span>↓</span></a>
+                    </div>
+                </div>
+                <div class="scroll-note"><span class="scroll-line"></span><span>Scroll to experience</span></div>
+                <div class="counter"><span id="frame-current">01</span> / <span id="frame-total">075</span></div>
+                <div class="side-label">Precision in every frame · Vanta automotive</div>
+            </div>
+        </section>
+        <section class="content" id="craft">
+            <div class="content-grid">
+                <div>
+                    <div class="kicker">01 — Designed to move</div>
+                    <h2>Every line<br>has a purpose.</h2>
+                </div>
+                <div>
+                    <p>A cinematic sports-car sequence where each JPG frame is tied to the page scroll. Scroll down to
+                        move forward through the drive, and scroll up to reverse it.</p>
+                    <p>The supplied source frames are 736 × 414 pixels. They have been carefully upscaled to 1472 × 828
+                        for smoother high-resolution display; upscaling improves presentation but cannot recreate detail
+                        that was not in the originals.</p>
+                </div>
+            </div>
+            <div class="specs" id="details">
+                <div class="spec"><strong>75</strong><span>JPG frames</span></div>
+                <div class="spec"><strong>2×</strong><span>Upscaled resolution</span></div>
+                <div class="spec"><strong>Scroll</strong><span>Frame controlled</span></div>
+            </div>
+        </section>
+        <section class="showcase" id="experience">
+            <div class="showcase-inner">
+                <div class="showcase-head">
+                    <div>
+                        <div class="kicker">02 — Beyond the surface</div>
+                        <h2>Precision you<br>can feel.</h2>
+                    </div>
+                    <div>
+                        <p>Every curve, shadow, and transition is part of the experience. This concept landing page is
+                            designed around the feeling of motion — a cinematic introduction, details that unfold as you
+                            explore, and a scroll-controlled visual sequence at its core.</p>
+                    </div>
+                </div>
+                <div class="feature-grid">
+                    <article class="feature-card"><span class="feature-number">01 / DESIGN</span>
+                        <div>
+                            <h3>Purposeful form.</h3>
+                            <p>Sculpted surfaces and confident proportions create a silhouette that feels fast even at a
+                                standstill.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card"><span class="feature-number">02 / ENGINEERING</span>
+                        <div>
+                            <h3>Built around motion.</h3>
+                            <p>A frame-by-frame visual journey responds to your scroll, making the page feel like an
+                                interactive film.</p>
+                        </div>
+                    </article>
+                    <article class="feature-card"><span class="feature-number">03 / EXPERIENCE</span>
+                        <div>
+                            <h3>Every detail matters.</h3>
+                            <p>Clean typography, subtle contrast, and responsive layouts keep the focus on the car and
+                                the story.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+        <section class="manifesto">
+            <div class="kicker">A different kind of drive</div>
+            <p>“The destination is only part of the story. The feeling you carry along the way is what makes the journey
+                unforgettable.”</p>
+        </section>
+        <section class="final" id="contact">
+            <div>
+                <div class="kicker">The road is yours</div>
+                <h2>Make every<br>second <em>count.</em></h2>
+                <p style="max-width:520px;margin:0 auto 28px;color:#a7abb4;line-height:1.8">Explore the work, follow the
+                    journey, and connect through the links below.</p><a class="btn btn-primary" href="#top">Back to the
+                    drive ↑</a>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="footer-main">
+            <div><a class="footer-brand" href="#top">VAN<span>T</span>A</a>
+                <p class="footer-about">A cinematic automotive landing page concept built to celebrate design, motion,
+                    and the art of the drive. Created as a visual web experience.</p>
+            </div>
+            <div>
+                <div class="footer-title">CONNECT WITH ME</div>
+                <div class="footer-links"><a href="https://github.com/MrAbdulSamadDEV" target="_blank"
+                        rel="noopener noreferrer"><span>↗</span> GitHub</a><a href="https://samad.vexr.dev"
+                        target="_blank" rel="noopener noreferrer"><span>↗</span> Portfolio</a><a
+                        href="https://www.linkedin.com/in/MRABDULSAMADDEV" target="_blank"
+                        rel="noopener noreferrer"><span>↗</span> LinkedIn</a><a
+                        href="https://www.youtube.com/@epicflixplus" target="_blank"
+                        rel="noopener noreferrer"><span>↗</span> YouTube</a><a href="https://x.com/ABDULSAMAD8492"
+                        target="_blank" rel="noopener noreferrer"><span>↗</span> X / Twitter</a><a
+                        href="https://www.instagram.com/samad_boy.dev" target="_blank"
+                        rel="noopener noreferrer"><span>↗</span> Instagram</a></div>
+            </div>
+            <div>
+                <div class="footer-title">EXPLORE THE PAGE</div>
+                <div class="footer-links"><a href="#top"><span>↗</span> The Drive</a><a href="#craft"><span>↗</span>
+                        Craft & Design</a><a href="#details"><span>↗</span> Details</a><a
+                        href="#experience"><span>↗</span> Experience</a><a href="#contact"><span>↗</span> Contact</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom"><span>© 2026 Vanta Automotive — Concept landing page</span><span>Designed for motion
+                · Built for the web</span><a href="#top">Back to top ↑</a></div>
+    </footer>
+    <script>(() => {
+            const canvas = document.getElementById('scene'), ctx = canvas.getContext('2d', {alpha: false}), hero = document.querySelector('.hero'), progress = document.getElementById('progress'), current = document.getElementById('frame-current'), loader = document.getElementById('loader'), fill = document.getElementById('loadfill'), loadtext = document.getElementById('loadtext'); const count = 75, images = new Array(count); let loaded = 0, ready = false, raf = 0, last = -1, target = 0, dpr = 1; current.textContent = '01'; document.getElementById('frame-total').textContent = String(count).padStart(3, '0'); function resize() {dpr = Math.min(window.devicePixelRatio || 1, 2); const r = canvas.getBoundingClientRect(); canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr)); if (last >= 0) draw(last); else draw(0)} function draw(index) {let img = images[index]; if (!img || !img.complete || !img.naturalWidth) {let nearest = images.find(x => x && x.complete && x.naturalWidth); if (!nearest) return; img = nearest} const w = canvas.width, h = canvas.height; ctx.fillStyle = '#080a0e'; ctx.fillRect(0, 0, w, h); const scale = Math.max(w / img.naturalWidth, h / img.naturalHeight); const dw = img.naturalWidth * scale, dh = img.naturalHeight * scale; ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high'; ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh); last = index; current.textContent = String(index + 1).padStart(3, '0')} function scrollUpdate() {raf = 0; const rect = hero.getBoundingClientRect(), max = Math.max(1, hero.offsetHeight - window.innerHeight), p = Math.max(0, Math.min(1, -rect.top / max)); target = Math.round(p * (count - 1)); progress.style.width = Math.min(100, Math.max(0, window.scrollY / Math.max(1, document.documentElement.scrollHeight - window.innerHeight) * 100) + '%'); if (ready) draw(target)} function onScroll() {if (!raf) raf = requestAnimationFrame(scrollUpdate)} function loadOne(i) {return new Promise(resolve => {const im = new Image(); images[i] = im; im.onload = () => {loaded++; fill.style.width = (loaded / count * 100) + '%'; loadtext.textContent = `Loading frames ${Math.round(loaded / count * 100)}%`; resolve()}; im.onerror = () => {loaded++; loadtext.textContent = `Loading frames ${Math.round(loaded / count * 100)}%`; resolve()}; im.src = `frames/frame_${String(i + 1).padStart(4, '0')}.jpg`})} async function init() {// Load first image for fast first paint, then preload remaining frames in manageable batches.
+                await loadOne(0); draw(0); for (let start = 1; start < count; start += 16) {await Promise.all(Array.from({length: Math.min(16, count - start)}, (_, j) => loadOne(start + j)))} ready = true; loader.classList.add('hidden'); scrollUpdate()
+            } window.addEventListener('scroll', onScroll, {passive: true}); window.addEventListener('resize', resize, {passive: true}); resize(); init()
+        })();</script>
+</body>
+
+</html>
